@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/posts/{id}', [PostController::class, 'show']);
 Route::post('/login', [AuthenticationController::class, 'login']);
 Route::post('/register', [AuthenticationController::class, 'register']);
+Route::get('/posts', [PostController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/myposts', [PostController::class, 'myposts']);
-    Route::get('/posts', [PostController::class, 'index']);
     Route::post('/logout', [AuthenticationController::class, 'logout']);
     Route::get('/me', [AuthenticationController::class, 'me']);
     Route::post('/posts',[PostController::class, 'store']);
