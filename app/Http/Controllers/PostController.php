@@ -26,9 +26,8 @@ class PostController extends Controller
 
         $posts = Post::where('author', $user->id)->get();
 
-        if(!$posts)
-        {
-            return response()->json(['message'=>'Bro Post Sumting !!!'],404) ;
+        if (!$posts) {
+            return response()->json(['message' => 'Bro Post Sumting !!!'], 404);
         }
 
         return PostDetailResource::collection($posts->loadMissing(['writer:id,username', 'comments:id,post_id,user_id,comments_content']));
@@ -76,7 +75,6 @@ class PostController extends Controller
 
     public function update(Request $request, $id)
     {
-        $post = Post::findOrFail($id);
         $validator = Validator::make($request->all(), [
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'title' => 'required',
@@ -87,20 +85,40 @@ class PostController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
+        // Get the post by ID
+        $post = Post::find($id);
+
+        if (!$post) {
+            return response()->json(['error' => 'Post not found'], 404);
+        }
+
+        // Ensure the authenticated user is the author of the post
+        if (Auth::id() !== $post->author) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Update the post fields
         $post->title = $request->title;
         $post->news = $request->news;
 
-        // Check if the 'image' is present in the request
+        // Check if a new image is provided
         if ($request->hasFile('image')) {
+            // Delete the old image if it exists
+            if ($post->image) {
+                Storage::delete('public/posts/' . $post->image);
+            }
+
+            // Store the new image
             $image = $request->file('image');
-            $image->storeAs('public/posts', $image->hashName());
             $post->image = $image->hashName();
+            $image->storeAs('public/posts', $post->image);
         }
 
         $post->save();
 
         return new PostDetailResource($post->loadMissing('writer:id,username'));
     }
+
 
     public function destroy($id)
     {
@@ -109,5 +127,4 @@ class PostController extends Controller
 
         return new PostDetailResource($post->loadMissing('writer:id,username'));
     }
-
 }
