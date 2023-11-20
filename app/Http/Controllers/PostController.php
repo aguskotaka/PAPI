@@ -16,7 +16,8 @@ class PostController extends Controller
 {
     function index()
     {
-        $posts = Post::all();
+        $posts = Post::latest('updated_at')->get();
+
         //return response()->json(['data'=>$posts]);
         return PostDetailResource::collection($posts->loadMissing(['writer:id,username', 'comments:id,post_id,user_id,comments_content']));
     }
@@ -24,7 +25,7 @@ class PostController extends Controller
     {
         $user = Auth::user();
 
-        $posts = Post::where('author', $user->id)->get();
+        $posts = Post::where('author', $user->id)->latest('updated_at')->get();
 
         if (!$posts) {
             return response()->json(['message' => 'Bro Post Sumting !!!'], 404);
