@@ -28,7 +28,7 @@ class PostOwner
         $post = Post::findOrFail($request->route('id'));
 
         // Periksa apakah pengguna adalah pemilik atau admin
-        if ($post->author != $CurrentUser->id && !$CurrentUser->isAdmin()) {
+        if ($post->author != $CurrentUser->id) {
             return response()->json(['message' => 'You are not the owner or an admin'], 401);
         }
 
