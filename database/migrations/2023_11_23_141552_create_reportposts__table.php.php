@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('post_id');
             $table->unsignedBigInteger('author');
             $table->unsignedBigInteger('user_id');
+            $table->text('reason');
             $table->timestamps();
             $table->softDeletes();
 
@@ -26,7 +27,7 @@ return new class extends Migration
         });
     }
 
-    /** 
+    /**
      * Reverse the migrations.
      */
     public function down(): void
