@@ -13,7 +13,7 @@ class ReportPosts extends Model
 
     protected $table = 'reportposts';
     protected $fillable = [
-        'post_id', 'author', 'user_id'
+        'post_id', 'author', 'user_id','reason',
     ];
 
 /**

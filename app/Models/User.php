@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -18,7 +17,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
     ];
@@ -43,8 +42,20 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    /**
+     * Check if the user has a specific role.
+     *
+     * @param  string  $role
+     * @return bool
+     */
+    // User.php
+    public function hasRole($role)
+    {
+        return $this->level === $role;
+    }
     public function isAdmin()
     {
-        return $this->role === 'admin';
+        return $this->level === 'admin';
     }
+    
 }
